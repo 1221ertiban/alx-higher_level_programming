@@ -27,7 +27,7 @@ class State(Base):
         nullable=False
     )
     cities = relationship(
-        "City",
+            'City',
         cascade="all, delete, delete-orphan",
         backref="state"
     )

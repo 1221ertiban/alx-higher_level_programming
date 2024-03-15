@@ -1,35 +1,15 @@
 #!/usr/bin/python3
-
-"""
-    A script that lists all states from the database hbtn_0e_0_usa
-    starting with capital letter N
-    Username, password and database names are given as user args
-"""
-
-
-import sys
+"""SQL injection"""
+from sys import argv
 import MySQLdb
 
 
 if __name__ == '__main__':
-    db = MySQLdb.connect(user=sys.argv[1],
-                         passwd=sys.argv[2],
-                         db=sys.argv[3],
-                         host='localhost',
-                         port=3306)
-
-    cursor = db.cursor()
-
-    sql = """SELECT * FROM states
-          WHERE name = %s
-          ORDER BY id ASC"""
-
-    cursor.execute(sql, (sys.argv[4],))
-
-    data = cursor.fetchall()
-
-    for row in data:
-        print(row)
-
-    cursor.close()
-    db.close()
+    user, password, database, state = argv[1], argv[2], argv[3], argv[4]
+    db = MySQLdb.connect(host="localhost",
+                         user=user, passwd=password, db=database)
+    db = db.cursor()
+    db.execute("""SELECT * FROM states WHERE name=%s ORDER BY id""", (state,))
+    r = db.fetchall()
+    for i in r:
+        print(i)

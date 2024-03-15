@@ -5,28 +5,19 @@
     Username, password, dbname will be passed as arguments to the script.
 """
 
-
 import sys
-from model_state import Base, State
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
+from model_state import Base, State
 
-if __name__ == '__main__':
-    engine = create_engine('mysql+mysqldb://{}:{}@localhost:3306/{}'.format(
-                           sys.argv[1], sys.argv[2], sys.argv[3]),
+
+if __name__ == "__main__":
+    engine = create_engine('mysql+mysqldb://{}:{}@localhost/{}'
+                           .format(sys.argv[1], sys.argv[2], sys.argv[3]),
                            pool_pre_ping=True)
-
-    Session = sessionmaker(bind=engine)
-
     Base.metadata.create_all(engine)
-
-    # create a session
-    session = Session()
-
-    # fetch row to change
-    rename_state = session.query(State) \
-                          .filter(State.id == 2).first()
-    rename_state.name = 'New Mexico'
+    session = Session(engine)
+    q = session.query(State).filter(State.id == 2).first()
+    q.name = 'New Mexico'
     session.commit()
-
     session.close()
